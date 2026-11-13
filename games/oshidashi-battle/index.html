@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>おしだしバトル</title>
+<style>
+  html, body { margin: 0; height: 100%; background: #000; overflow: hidden; font-family: "Yu Gothic UI", "Meiryo", sans-serif; }
+  canvas#game { display: block; width: 100vw; height: 100vh; }
+  button { font: inherit; cursor: pointer; }
+
+  /* 参加画面のときだけ出す、スタッフ用の入口 */
+  #regBtn { position: fixed; top: 12px; right: 12px; padding: 8px 16px; font-weight: 700; color: #1b2340;
+    background: #fff; border: 3px solid #1b2340; border-radius: 999px; }
+  body:not([data-scene="join"]) #regBtn { display: none; }
+
+  #reg { position: fixed; inset: 0; background: rgba(15, 20, 50, .72); display: flex; align-items: center; justify-content: center; }
+  #reg[hidden] { display: none; }
+  #reg .panel { background: #fff; color: #1b2340; border-radius: 18px; padding: 20px 24px; width: min(820px, 94vw);
+    max-height: 94vh; overflow: auto; box-sizing: border-box; }
+  #reg h2 { margin: 0 0 12px; font-size: 22px; display: flex; justify-content: space-between; align-items: center; }
+  #reg h3 { margin: 0 0 8px; font-size: 16px; }
+  #reg .cols { display: flex; gap: 24px; flex-wrap: wrap; }
+  #reg .left { width: 320px; }
+  #reg .right { flex: 1; min-width: 240px; }
+  #drop { position: relative; width: 320px; height: 320px; border-radius: 12px; overflow: hidden; background: #dfe6f5;
+    touch-action: none; cursor: grab; }
+  #drop.empty { cursor: pointer; outline: 3px dashed #7d8bb5; outline-offset: -8px; }
+  #drop.over { background: #c6f0ff; }
+  #crop { display: block; }
+  #dropHint { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; text-align: center;
+    font-weight: 700; line-height: 1.8; pointer-events: none; }
+  #drop:not(.empty) #dropHint { display: none; }
+  #reg label { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-weight: 700; }
+  #zoom { flex: 1; }
+  #reg .hint { margin: 6px 0 10px; font-size: 13px; color: #55608a; }
+  #name { width: 100%; box-sizing: border-box; padding: 8px 10px; font: inherit; font-size: 18px; border: 2px solid #7d8bb5; border-radius: 8px; }
+  #reg .row { display: flex; gap: 8px; margin-top: 10px; }
+  #reg .row button, #clearAll, #close { padding: 8px 14px; border-radius: 8px; border: 2px solid #1b2340; background: #fff; font-weight: 700; }
+  #save { flex: 1; background: #ffc928 !important; }
+  #save:disabled { opacity: .45; cursor: default; }
+  #msg { min-height: 1.5em; margin-top: 8px; font-weight: 700; color: #14803a; }
+  #list { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: 10px; max-height: 360px; overflow: auto; margin-bottom: 10px; }
+  #list .item { text-align: center; font-size: 13px; font-weight: 700; }
+  #list img { width: 72px; height: 72px; border-radius: 50%; border: 3px solid #1b2340; display: block; margin: 0 auto 4px; }
+  #list .item button { margin-top: 4px; padding: 2px 10px; font-size: 12px; border-radius: 6px; border: 1.5px solid #a81a2b; color: #a81a2b; background: #fff; }
+  #list .empty { grid-column: 1 / -1; color: #55608a; font-weight: 400; }
+  button.armed { background: #ff4d5a !important; color: #fff !important; border-color: #a81a2b !important; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+
+<button id="regBtn">キャラ登録</button>
+<div id="reg" hidden>
+  <div class="panel">
+    <h2>キャラ登録 <button id="close">とじる</button></h2>
+    <div class="cols">
+      <div class="left">
+        <div id="drop" class="empty">
+          <canvas id="crop" width="320" height="320"></canvas>
+          <div id="dropHint">ここに画像をドロップ<br>クリックで選ぶ<br>Ctrl+V で貼り付け</div>
+        </div>
+        <input type="file" id="file" accept="image/*" hidden>
+        <label>大きさ <input type="range" id="zoom" min="0" max="100" value="22" step="0.5"></label>
+        <p class="hint">ドラッグで位置、スライダーかホイールで大きさを変えて、丸の中に顔を入れます。</p>
+        <input id="name" maxlength="8" placeholder="なまえ（8文字まで）" autocomplete="off">
+        <div class="row">
+          <button id="save" disabled>登録する</button>
+          <button id="reset">画像を選びなおす</button>
+        </div>
+        <div id="msg"></div>
+      </div>
+      <div class="right">
+        <h3>登録ずみ（<span id="count">0</span>）</h3>
+        <div id="list"></div>
+        <button id="clearAll">ぜんぶ消す</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/input.js"></script>
+<script src="js/character.js"></script>
+<script src="js/roster.js"></script>
+<script src="js/game.js"></script>
+<script src="js/register.js"></script>
+</body>
+</html>
