@@ -6,6 +6,12 @@
       "runtimeExecutable": "python3",
       "runtimeArgs": ["-m", "http.server", "8765", "--directory", "games/job-brawl"],
       "port": 8765
+    },
+    {
+      "name": "oshidashi-battle",
+      "runtimeExecutable": "python3",
+      "runtimeArgs": ["-m", "http.server", "8766", "--directory", "games/oshidashi-battle"],
+      "port": 8766
     }
   ]
 }
